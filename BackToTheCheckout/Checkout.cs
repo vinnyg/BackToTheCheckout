@@ -7,12 +7,13 @@ namespace BackToTheCheckout
     public class Checkout
     {
         private int[] pricingIndex;
+        private PriceSystem priceSystem;
 
         public List<BasketItem> BasketItems { get; private set; }
 
-        public Checkout(int[] pricingIndex)
+        public Checkout(PriceSystem priceSystem)
         {
-            this.pricingIndex = pricingIndex;
+            this.priceSystem = priceSystem;
         }
 
         public void Scan(List<BasketItem> items)
@@ -20,13 +21,16 @@ namespace BackToTheCheckout
             this.BasketItems = items;
         }
 
-        public int CalculatePrice()
+        public int CalculateTotalPrice()
         {
             var price = 0;
 
             foreach (var item in BasketItems)
             {
-                price += item.Quantity * pricingIndex[item.Id];
+                var itemTotalPrice = item.Quantity * priceSystem.GetPrice(item.Id);
+                var itemDiscount = priceSystem.CalculateTotalDiscount(item);
+
+                price = price + itemTotalPrice - itemDiscount;
             }
 
             return price;
