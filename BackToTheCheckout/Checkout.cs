@@ -29,29 +29,11 @@ namespace BackToTheCheckout
 
         public int CalculateTotalPrice()
         {
-            var price = 0;
+            var price = BasketItems.Sum(item => item.Price);
 
-            foreach (var item in BasketItems)
-            {
-                price += item.Price;
-            }
-
-            var totalDiscount = CalculateTotalDiscounts(BasketItems);
+            var totalDiscount = priceSystem.CalculateTotalDiscount(BasketItems);
 
             return price - totalDiscount;
-        }
-
-        private int CalculateTotalDiscounts(List<ProductItem> basket)
-        {
-            var totalApplicableDiscount = 0;
-            var itemQuantities = basket.GroupBy(x => x.Id);
-
-            foreach (var item in itemQuantities)
-            {
-                totalApplicableDiscount += priceSystem.CalculateTotalDiscount(item.Key, item.Count());
-            }
-
-            return totalApplicableDiscount;
         }
     }
 }
