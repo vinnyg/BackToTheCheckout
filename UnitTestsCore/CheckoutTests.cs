@@ -125,7 +125,7 @@ namespace UnitTestsCore
             // Arrange
             var priceSystemMock = new Mock<IPriceSystem>();
             priceSystemMock.Setup(x => x.CalculateTotalDiscount(
-                It.IsAny<int>(), It.IsAny<int>()
+                It.IsAny<IEnumerable<ProductItem>>()
                 )).Returns(20);
 
             var checkout = new Checkout(priceSystemMock.Object);
@@ -144,13 +144,11 @@ namespace UnitTestsCore
         }
 
         [TestMethod]
-        public void Should_CalculateCorrectTotalPrice_When_ItemsScannedIncrementally()
+        public void Should_CalculateCorrectTotalPriceWithoutDiscounts_When_ItemsScannedIncrementally()
         {
             // Arrange
             var priceSystemMock = new Mock<IPriceSystem>();
-            priceSystemMock.Setup(x => x.CalculateTotalDiscount
-                            (It.Is<int>(i => i == 0),
-                             It.Is<int>(i => i == 3))).Returns(20);
+            priceSystemMock.Setup(x => x.CalculateTotalDiscount(It.IsAny<IEnumerable<ProductItem>>()));
 
             var checkout = new Checkout(priceSystemMock.Object);
 
@@ -174,8 +172,31 @@ namespace UnitTestsCore
 
             checkout.Scan(item1);
             runningTotalPrice = checkout.CalculateTotalPrice();
-            Assert.AreEqual(30, runningTotalPrice);
+            Assert.AreEqual(50, runningTotalPrice);
+        }
 
+        [TestMethod]
+        public void Should_ApplyDiscount_When_DiscountApplicable()
+        {
+            // Arrange
+            var priceSystemMock = new Mock<IPriceSystem>();
+            priceSystemMock.Setup(x => x.CalculateTotalDiscount(It.IsAny<IEnumerable<ProductItem>>()));
+
+            var checkout = new Checkout(priceSystemMock.Object);
+
+            var item = new ProductItem { Id = 0, Price = 3 };
+
+            checkout.Scan(item);
+            checkout.Scan(item);
+            checkout.Scan(item);
+
+            // Act
+            checkout.CalculateTotalPrice();
+
+            // Assert
+            priceSystemMock.Verify(x => x.CalculateTotalDiscount(
+                It.Is<IEnumerable<ProductItem>>(items => items.All(checkout.BasketItems.Contains))),
+                Times.Once);
         }
     }
 }

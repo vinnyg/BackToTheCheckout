@@ -10,16 +10,10 @@ namespace UnitTestsCore
     public class PriceSystemTests
     {
         private Dictionary<int, Func<int, int>> discountRules;
-        private Dictionary<int, int> itemPrices;
 
         [TestInitialize]
         public void TestInitialize()
         {
-            itemPrices = new Dictionary<int, int>();
-            itemPrices.Add(0, 10);
-            itemPrices.Add(1, 5);
-            itemPrices.Add(2, 20);
-
             discountRules = new Dictionary<int, Func<int, int>>();
             discountRules.Add(0, (int quantity) => {
                 var timesToApplyDiscount = quantity / 3;
@@ -28,27 +22,14 @@ namespace UnitTestsCore
             });
             discountRules.Add(1, (int quantity) => {
                 var timesToApplyDiscount = quantity / 2;
-                var totalDiscountAmount = 5 * timesToApplyDiscount;
+                var totalDiscountAmount = 15 * timesToApplyDiscount;
                 return totalDiscountAmount;
             });
             discountRules.Add(2, (int quantity) => {
                 var timesToApplyDiscount = quantity / 3;
-                var totalDiscountAmount = 20 * timesToApplyDiscount;
+                var totalDiscountAmount = 8 * timesToApplyDiscount;
                 return totalDiscountAmount;
             });
-        }
-
-        [TestMethod]
-        public void Should_ReturnCorrectPriceForItem()
-        {
-            // Arrange
-            var item = new BasketItem(0, 1);
-
-            // Act
-            var result = itemPrices[item.Id];
-
-            // Assert
-            Assert.AreEqual(10, result);
         }
 
         [TestMethod]
@@ -80,6 +61,46 @@ namespace UnitTestsCore
 
             // Assert
             Assert.AreEqual(20, totalDiscountAmount);
+        }
+
+        [TestMethod]
+        public void Should_CalculateCorrectDiscountForAllItems_When_ManyDiscountsApply()
+        {
+            // Arrange
+            var items = new List<ProductItem>
+            {
+                new ProductItem { Id = 0, Price = 10 },
+                new ProductItem { Id = 0, Price = 10 },
+                new ProductItem { Id = 1, Price = 20 },
+                new ProductItem { Id = 1, Price = 20 },
+                new ProductItem { Id = 0, Price = 10 },
+                new ProductItem { Id = 0, Price = 10 },
+                new ProductItem { Id = 1, Price = 20 },
+                new ProductItem { Id = 2, Price = 5 },
+                new ProductItem { Id = 0, Price = 10 },
+                new ProductItem { Id = 0, Price = 10 }
+            };
+
+            var priceSystem = new PriceSystem(discountRules);
+            // Act
+            var totalDiscountPrice = priceSystem.CalculateTotalDiscount(items);
+
+            // Assert
+            Assert.AreEqual(35, totalDiscountPrice);
+        }
+
+        [TestMethod]
+        public void Should_ReturnCorrectDiscount_When_ApplyingMultiProductDiscounts()
+        {
+            // Arrange
+            var itemId = 0;
+
+            // Act
+
+
+            // Assert
+
+
         }
     }
 }

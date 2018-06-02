@@ -7,5 +7,7 @@ namespace BackToTheCheckout
     public interface IPriceSystem
     {
         int CalculateTotalDiscount(int itemId, int itemQuantity);
+
+        int CalculateTotalDiscount(IEnumerable<ProductItem> basket);
     }
 }
