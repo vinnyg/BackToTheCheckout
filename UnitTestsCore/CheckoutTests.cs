@@ -9,8 +9,6 @@ namespace UnitTestsCore
     [TestClass]
     public class CheckoutTests
     {
-        private PriceSystem priceSystem;
-
         [TestInitialize]
         public void TestInitialize()
         {
@@ -22,7 +20,7 @@ namespace UnitTestsCore
             // Arrange
             var item = new ProductItem { Id = 0, Price = 10 };
 
-            var checkout = new Checkout(priceSystem);
+            var checkout = new Checkout(null);
 
             // Act
             checkout.Scan(item);

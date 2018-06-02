@@ -58,7 +58,7 @@ namespace UnitTestsCore
             var itemId = 0;
             var itemQuantity = 3;
 
-            var priceSystem = new PriceSystem(itemPrices, discountRules);
+            var priceSystem = new PriceSystem(discountRules);
             // Act
             var totalDiscountAmount = priceSystem.CalculateTotalDiscount(itemId, itemQuantity);
 
@@ -73,7 +73,7 @@ namespace UnitTestsCore
             var itemId = 0;
             var itemQuantity = 6;
 
-            var priceSystem = new PriceSystem(itemPrices, discountRules);
+            var priceSystem = new PriceSystem(discountRules);
 
             // Act
             var totalDiscountAmount = priceSystem.CalculateTotalDiscount(itemId, itemQuantity);

@@ -6,12 +6,10 @@ namespace BackToTheCheckout
 {
     public class PriceSystem : IPriceSystem
     {
-        private Dictionary<int, int> itemPrices;
         private Dictionary<int, Func<int, int>> discountRules;
 
-        public PriceSystem(Dictionary<int, int> itemPrices, Dictionary<int, Func<int, int>> discountRules)
+        public PriceSystem(Dictionary<int, Func<int, int>> discountRules)
         {
-            this.itemPrices = itemPrices;
             this.discountRules = discountRules;
         }
 
