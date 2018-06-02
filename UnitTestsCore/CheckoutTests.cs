@@ -75,7 +75,7 @@ namespace UnitTestsCore
             // Arrange
             var checkout = new Checkout(pricingIndex);
 
-            var item1 = new BasketItem(0, 3);
+            var item1 = new BasketItem(0, 2);
             var item2 = new BasketItem(1, 2);
 
             var items = new List<BasketItem> { item1, item2 };
@@ -86,14 +86,26 @@ namespace UnitTestsCore
             var result = checkout.CalculatePrice();
 
             // Assert
-            Assert.AreEqual(40, result);
+            Assert.AreEqual(30, result);
         }
 
         [TestMethod]
-        public void SHould_CorrectlyCalculatePrice_When_DiscountIsApplied()
+        public void Should_CorrectlyCalculatePrice_When_DiscountIsApplied()
         {
             // Arrange
             var checkout = new Checkout(pricingIndex);
+
+            var item = new BasketItem(0, 3);
+
+            var items = new List<BasketItem> { item };
+
+            checkout.Scan(items);
+
+            // Act
+            var result = checkout.CalculatePrice();
+
+            // Assert
+            Assert.AreEqual(20, result);
         }
     }
 }
