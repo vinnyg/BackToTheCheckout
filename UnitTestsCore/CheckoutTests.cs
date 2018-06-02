@@ -1,8 +1,8 @@
-using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using BackToTheCheckout;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Linq;
+using Moq;
 
 namespace UnitTestsCore
 {
@@ -132,12 +132,15 @@ namespace UnitTestsCore
         public void Should_CalculateCorrectTotalPrice_When_ItemsScannedIncrementally()
         {
             // Arrange
-            var priceSystemMock = new PriceSystemMock();
-            var checkout = new Checkout(priceSystemMock);
+            var priceSystemMock = new Mock<IPriceSystem>();
+            priceSystemMock.Setup(x => x.CalculateTotalDiscount
+                            (It.Is<int>(i => i == 0),
+                             It.Is<int>(i => i == 3))).Returns(20);
+
+            var checkout = new Checkout(priceSystemMock.Object);
 
             var item1 = new ProductItem { Id = 0, Price = 10 };
             var item2 = new ProductItem { Id = 1, Price = 20 };
-            var item3 = new ProductItem { Id = 2, Price = 5 };
             // Act
             // Assert
             var runningTotalPrice = 0;
@@ -148,15 +151,15 @@ namespace UnitTestsCore
 
             checkout.Scan(item2);
             runningTotalPrice = checkout.CalculateTotalPrice();
-            Assert.AreEqual(15, runningTotalPrice);
+            Assert.AreEqual(30, runningTotalPrice);
 
             checkout.Scan(item1);
             runningTotalPrice = checkout.CalculateTotalPrice();
-            Assert.AreEqual(25, runningTotalPrice);
+            Assert.AreEqual(40, runningTotalPrice);
 
             checkout.Scan(item1);
             runningTotalPrice = checkout.CalculateTotalPrice();
-            Assert.AreEqual(15, runningTotalPrice);
+            Assert.AreEqual(30, runningTotalPrice);
 
         }
 
