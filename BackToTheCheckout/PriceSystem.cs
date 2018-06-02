@@ -15,11 +15,6 @@ namespace BackToTheCheckout
             this.discountRules = discountRules;
         }
 
-        public int GetPrice(int itemId)
-        {
-            return itemPrices[itemId];
-        }
-
         public int CalculateTotalDiscount(int itemId, int itemQuantity)
         {
             return discountRules[itemId].Invoke(itemQuantity);

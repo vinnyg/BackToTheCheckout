@@ -51,7 +51,7 @@ namespace BackToTheCheckout
                 totalApplicableDiscount += priceSystem.CalculateTotalDiscount(item.Key, item.Count());
             }
 
-            return 0;
+            return totalApplicableDiscount;
         }
     }
 }

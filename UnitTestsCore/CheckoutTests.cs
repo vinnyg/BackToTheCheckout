@@ -69,7 +69,9 @@ namespace UnitTestsCore
         public void Should_CorrectlyCalculatePrice_When_ThereIsOneOfEachItem()
         {
             // Arrange
-            var checkout = new Checkout(priceSystem);
+            var priceSystemMock = new PriceSystemMock();
+            var checkout = new Checkout(priceSystemMock);
+
             var item1 = new ProductItem { Id = 0, Price = 10 };
             var item2 = new ProductItem { Id = 1, Price = 20 };
             var item3 = new ProductItem { Id = 2, Price = 5 };
@@ -89,7 +91,8 @@ namespace UnitTestsCore
         public void Should_CorrectlyCalculatePrice_When_ThereAreMultipleOfEachItem()
         {
             // Arrange
-            var checkout = new Checkout(priceSystem);
+            var priceSystemMock = new PriceSystemMock();
+            var checkout = new Checkout(priceSystemMock);
 
             var item1 = new ProductItem { Id = 0, Price = 10 };
             var item2 = new ProductItem { Id = 1, Price = 20 };
@@ -109,18 +112,20 @@ namespace UnitTestsCore
         public void Should_CorrectlyCalculatePrice_When_DiscountIsApplied()
         {
             // Arrange
-            var priceSystemMock = new PriceSystemMock { ItemPrice = 20 , TotalDiscount = 20 };
+            var priceSystemMock = new PriceSystemMock { TotalDiscount = 20 };
             var checkout = new Checkout(priceSystemMock);
 
             var item = new ProductItem { Id = 0, Price = 10 };
 
+            checkout.Scan(item);
+            checkout.Scan(item);
             checkout.Scan(item);
 
             // Act
             var result = checkout.CalculateTotalPrice();
 
             // Assert
-            Assert.AreEqual(40, result);
+            Assert.AreEqual(10, result);
         }
 
         [TestMethod]
@@ -158,23 +163,10 @@ namespace UnitTestsCore
         private class PriceSystemMock : IPriceSystem
         {
             public int TotalDiscount { get; set; }
-            public int ItemPrice { get; set; }
-
-            public int CalculateTotalDiscount(BasketItem item)
-            {
-                return TotalDiscount;
-            }
 
             public int CalculateTotalDiscount(int itemId, int itemQuantity)
             {
                 return TotalDiscount;
-            }
-
-            public int GetPrice(int itemId)
-            {
-
-                return itemId;
-                //return ItemPrice[itemId];
             }
         }
     }
