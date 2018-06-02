@@ -14,43 +14,35 @@ namespace UnitTestsCore
         [TestInitialize]
         public void TestInitialize()
         {
-            var itemPrices = new Dictionary<int, int>();
-            itemPrices.Add(0, 10);
-            itemPrices.Add(1, 5);
-            itemPrices.Add(2, 20);
-
-            var discountRules = new Dictionary<int, Func<int, int>>();
-            discountRules.Add(0, (int quantity) => {
-                var timesToApplyDiscount = quantity / 3;
-                var totalDiscountAmount = 10 * timesToApplyDiscount;
-                return totalDiscountAmount;
-            });
-            discountRules.Add(1, (int quantity) => {
-                var timesToApplyDiscount = quantity / 4;
-                var totalDiscountAmount = 5 * timesToApplyDiscount;
-                return totalDiscountAmount;
-            });
-            discountRules.Add(2, (int quantity) => {
-                var timesToApplyDiscount = quantity / 3;
-                var totalDiscountAmount = 20 * timesToApplyDiscount;
-                return totalDiscountAmount;
-            });
-
-
-            priceSystem = new PriceSystem(itemPrices, discountRules);
         }
 
         [TestMethod]
         public void Should_CorrectlyScanBasketItems()
         {
             // Arrange
-
-            var item1 = new BasketItem(0, 1);
-            var item2 = new BasketItem(1, 2);
-
-            var items = new List<BasketItem> { item1, item2 };
+            var item = new ProductItem { Id = 0, Price = 10 };
 
             var checkout = new Checkout(priceSystem);
+
+            // Act
+            checkout.Scan(item);
+
+            // Assert
+            checkout.BasketItems.Contains(item);
+        }
+
+        [TestMethod]
+        public void Should_ScanItemList()
+        {
+            // Arrange
+            var item1 = new ProductItem { Id = 0, Price = 10 };
+            var item2 = new ProductItem { Id = 1, Price = 20 };
+            var item3 = new ProductItem { Id = 2, Price = 5 };
+            var item4 = new ProductItem { Id = 0, Price = 10 };
+
+            var items = new List<ProductItem> { item1, item2, item3, item4 };
+
+            var checkout = new Checkout(null);
 
             // Act
             checkout.Scan(items);
@@ -65,7 +57,7 @@ namespace UnitTestsCore
             // Arrange
             var checkout = new Checkout(priceSystem);
 
-            checkout.Scan(new List<BasketItem>());
+            checkout.Scan(new List<ProductItem>());
             // Act
             var result = checkout.CalculateTotalPrice();
 
@@ -78,11 +70,11 @@ namespace UnitTestsCore
         {
             // Arrange
             var checkout = new Checkout(priceSystem);
-            var item1 = new BasketItem(0, 1);
-            var item2 = new BasketItem(1, 1);
-            var item3 = new BasketItem(2, 1);
+            var item1 = new ProductItem { Id = 0, Price = 10 };
+            var item2 = new ProductItem { Id = 1, Price = 20 };
+            var item3 = new ProductItem { Id = 2, Price = 5 };
 
-            var items = new List<BasketItem> { item1, item2, item3 };
+            var items = new List<ProductItem> { item1, item2, item3 };
 
             checkout.Scan(items);
 
@@ -99,10 +91,10 @@ namespace UnitTestsCore
             // Arrange
             var checkout = new Checkout(priceSystem);
 
-            var item1 = new BasketItem(0, 2);
-            var item2 = new BasketItem(1, 2);
+            var item1 = new ProductItem { Id = 0, Price = 10 };
+            var item2 = new ProductItem { Id = 1, Price = 20 };
 
-            var items = new List<BasketItem> { item1, item2 };
+            var items = new List<ProductItem> { item1, item2, item1, item2 };
 
             checkout.Scan(items);
 
@@ -110,26 +102,80 @@ namespace UnitTestsCore
             var result = checkout.CalculateTotalPrice();
 
             // Assert
-            Assert.AreEqual(30, result);
+            Assert.AreEqual(60, result);
         }
 
         [TestMethod]
         public void Should_CorrectlyCalculatePrice_When_DiscountIsApplied()
         {
             // Arrange
-            var checkout = new Checkout(priceSystem);
+            var priceSystemMock = new PriceSystemMock { ItemPrice = 20 , TotalDiscount = 20 };
+            var checkout = new Checkout(priceSystemMock);
 
-            var item = new BasketItem(0, 3);
+            var item = new ProductItem { Id = 0, Price = 10 };
 
-            var items = new List<BasketItem> { item };
-
-            checkout.Scan(items);
+            checkout.Scan(item);
 
             // Act
             var result = checkout.CalculateTotalPrice();
 
             // Assert
-            Assert.AreEqual(20, result);
+            Assert.AreEqual(40, result);
+        }
+
+        [TestMethod]
+        public void Should_CalculateCorrectTotalPrice_When_ItemsScannedIncrementally()
+        {
+            // Arrange
+            var priceSystemMock = new PriceSystemMock();
+            var checkout = new Checkout(priceSystemMock);
+
+            var item1 = new ProductItem { Id = 0, Price = 10 };
+            var item2 = new ProductItem { Id = 1, Price = 20 };
+            var item3 = new ProductItem { Id = 2, Price = 5 };
+            // Act
+            // Assert
+            var runningTotalPrice = 0;
+
+            checkout.Scan(item1);
+            runningTotalPrice = checkout.CalculateTotalPrice();
+            Assert.AreEqual(10, runningTotalPrice);
+
+            checkout.Scan(item2);
+            runningTotalPrice = checkout.CalculateTotalPrice();
+            Assert.AreEqual(15, runningTotalPrice);
+
+            checkout.Scan(item1);
+            runningTotalPrice = checkout.CalculateTotalPrice();
+            Assert.AreEqual(25, runningTotalPrice);
+
+            checkout.Scan(item1);
+            runningTotalPrice = checkout.CalculateTotalPrice();
+            Assert.AreEqual(15, runningTotalPrice);
+
+        }
+
+        private class PriceSystemMock : IPriceSystem
+        {
+            public int TotalDiscount { get; set; }
+            public int ItemPrice { get; set; }
+
+            public int CalculateTotalDiscount(BasketItem item)
+            {
+                return TotalDiscount;
+            }
+
+            public int CalculateTotalDiscount(int itemId, int itemQuantity)
+            {
+                return TotalDiscount;
+            }
+
+            public int GetPrice(int itemId)
+            {
+
+                return itemId;
+                //return ItemPrice[itemId];
+            }
         }
     }
 }

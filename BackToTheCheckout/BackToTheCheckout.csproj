@@ -5,10 +5,4 @@
     <TargetFramework>netcoreapp1.1</TargetFramework>
   </PropertyGroup>
 
-  <!--<ItemGroup>
-    <Compile Include="BasketItem.cs" />
-    <Compile Include="BasketItem2.cs" />
-    <Compile Include="BasketItem3.cs" />
-  </ItemGroup>-->
-
 </Project>

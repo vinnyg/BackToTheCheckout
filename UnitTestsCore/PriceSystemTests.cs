@@ -23,7 +23,7 @@ namespace UnitTestsCore
             discountRules = new Dictionary<int, Func<int, int>>();
             discountRules.Add(0, (int quantity) => {
                 var timesToApplyDiscount = quantity / 3;
-                var totalDiscountAmount = 20 * timesToApplyDiscount;
+                var totalDiscountAmount = 10 * timesToApplyDiscount;
                 return totalDiscountAmount;
             });
             discountRules.Add(1, (int quantity) => {
@@ -33,7 +33,7 @@ namespace UnitTestsCore
             });
             discountRules.Add(2, (int quantity) => {
                 var timesToApplyDiscount = quantity / 3;
-                var totalDiscountAmount = 10 * timesToApplyDiscount;
+                var totalDiscountAmount = 20 * timesToApplyDiscount;
                 return totalDiscountAmount;
             });
         }
@@ -55,29 +55,31 @@ namespace UnitTestsCore
         public void Should_ReturnCorrectDiscountForItem()
         {
             // Arrange
-            var item = new BasketItem(0, 3);
+            var itemId = 0;
+            var itemQuantity = 3;
 
             var priceSystem = new PriceSystem(itemPrices, discountRules);
             // Act
-            var totalDiscountAmount = priceSystem.CalculateTotalDiscount(item);
+            var totalDiscountAmount = priceSystem.CalculateTotalDiscount(itemId, itemQuantity);
 
             // Assert
-            Assert.AreEqual(20, totalDiscountAmount);
+            Assert.AreEqual(10, totalDiscountAmount);
         }
 
         [TestMethod]
         public void Should_ReturnCorrectDiscountTotal_When_DiscountAppliesMoreThanOnce()
         {
             // Arrange
-            var item = new BasketItem(0, 6);
+            var itemId = 0;
+            var itemQuantity = 6;
 
             var priceSystem = new PriceSystem(itemPrices, discountRules);
 
             // Act
-            var totalDiscountAmount = priceSystem.CalculateTotalDiscount(item);
+            var totalDiscountAmount = priceSystem.CalculateTotalDiscount(itemId, itemQuantity);
 
             // Assert
-            Assert.AreEqual(40, totalDiscountAmount);
+            Assert.AreEqual(20, totalDiscountAmount);
         }
     }
 }

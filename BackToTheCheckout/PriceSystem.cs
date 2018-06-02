@@ -4,7 +4,7 @@ using System.Text;
 
 namespace BackToTheCheckout
 {
-    public class PriceSystem
+    public class PriceSystem : IPriceSystem
     {
         private Dictionary<int, int> itemPrices;
         private Dictionary<int, Func<int, int>> discountRules;
@@ -20,9 +20,9 @@ namespace BackToTheCheckout
             return itemPrices[itemId];
         }
 
-        public int CalculateTotalDiscount(BasketItem item)
+        public int CalculateTotalDiscount(int itemId, int itemQuantity)
         {
-            return discountRules[item.Id].Invoke(item.Quantity);
+            return discountRules[itemId].Invoke(itemQuantity);
         }
     }
 }
