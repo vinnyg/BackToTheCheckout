@@ -4,7 +4,7 @@ using System.Text;
 
 namespace BackToTheCheckout
 {
-    public interface IPriceSystem
+    public interface IDiscountCalculator
     {
         int CalculateTotalDiscount(int itemId, int itemQuantity);
 

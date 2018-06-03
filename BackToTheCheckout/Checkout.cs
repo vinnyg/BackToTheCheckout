@@ -7,13 +7,13 @@ namespace BackToTheCheckout
 {
     public class Checkout
     {
-        private IPriceSystem priceSystem;
+        private IDiscountCalculator discountCalculator;
         
         public List<ProductItem> BasketItems { get; private set; }
 
-        public Checkout(IPriceSystem priceSystem)
+        public Checkout(IDiscountCalculator discountCalculator)
         {
-            this.priceSystem = priceSystem;
+            this.discountCalculator = discountCalculator;
             BasketItems = new List<ProductItem>();
         }
 
@@ -22,7 +22,7 @@ namespace BackToTheCheckout
             BasketItems.Add(item);
         }
 
-        public void Scan(List<ProductItem> items)
+        public void ScanBasket(List<ProductItem> items)
         {
             BasketItems.AddRange(items);
         }
@@ -31,7 +31,7 @@ namespace BackToTheCheckout
         {
             var price = BasketItems.Sum(item => item.Price);
 
-            var totalDiscount = priceSystem.CalculateTotalDiscount(BasketItems);
+            var totalDiscount = discountCalculator.CalculateTotalDiscount(BasketItems);
 
             return price - totalDiscount;
         }

@@ -39,7 +39,7 @@ namespace UnitTestsCore
             var itemId = 0;
             var itemQuantity = 3;
 
-            var priceSystem = new PriceSystem(discountRules);
+            var priceSystem = new DiscountCalculator(discountRules);
             // Act
             var totalDiscountAmount = priceSystem.CalculateTotalDiscount(itemId, itemQuantity);
 
@@ -54,7 +54,7 @@ namespace UnitTestsCore
             var itemId = 0;
             var itemQuantity = 6;
 
-            var priceSystem = new PriceSystem(discountRules);
+            var priceSystem = new DiscountCalculator(discountRules);
 
             // Act
             var totalDiscountAmount = priceSystem.CalculateTotalDiscount(itemId, itemQuantity);
@@ -81,7 +81,7 @@ namespace UnitTestsCore
                 new ProductItem { Id = 0, Price = 10 }
             };
 
-            var priceSystem = new PriceSystem(discountRules);
+            var priceSystem = new DiscountCalculator(discountRules);
             // Act
             var totalDiscountPrice = priceSystem.CalculateTotalDiscount(items);
 
@@ -95,12 +95,18 @@ namespace UnitTestsCore
             // Arrange
             var itemId = 0;
 
-            // Act
+            var items = new List<ProductItem>
+            {
+                new ProductItem { Id = 4, Price = 10 },
+                new ProductItem { Id = 4, Price = 10 },
+                new ProductItem { Id = 5, Price = 20 }
+            };
 
+            // Act
+            var totalDiscount = 0;
 
             // Assert
-
-
+            Assert.AreEqual(30, totalDiscount);
         }
     }
 }

@@ -5,4 +5,9 @@
     <TargetFramework>netcoreapp1.1</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Include="DiscountCalculator.cs" />
+    <Compile Include="IDiscountCalculator.cs" />
+  </ItemGroup>
+
 </Project>

@@ -5,11 +5,11 @@ using System.Text;
 
 namespace BackToTheCheckout
 {
-    public class PriceSystem : IPriceSystem
+    public class DiscountCalculator : IDiscountCalculator
     {
         private Dictionary<int, Func<int, int>> discountRules;
 
-        public PriceSystem(Dictionary<int, Func<int, int>> discountRules)
+        public DiscountCalculator(Dictionary<int, Func<int, int>> discountRules)
         {
             this.discountRules = discountRules;
         }

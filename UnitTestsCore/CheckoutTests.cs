@@ -43,7 +43,7 @@ namespace UnitTestsCore
             var checkout = new Checkout(null);
 
             // Act
-            checkout.Scan(items);
+            checkout.ScanBasket(items);
 
             // Assert
             checkout.BasketItems.All(items.Contains);
@@ -53,14 +53,14 @@ namespace UnitTestsCore
         public void Should_ReturnPriceOf0_When_BasketIsEmpty()
         {
             // Arrange
-            var priceSystemMock = new Mock<IPriceSystem>();
+            var priceSystemMock = new Mock<IDiscountCalculator>();
             priceSystemMock.Setup(x => x.CalculateTotalDiscount(
                 It.IsAny<int>(), It.IsAny<int>()
                 )).Returns(0);
 
             var checkout = new Checkout(priceSystemMock.Object);
 
-            checkout.Scan(new List<ProductItem>());
+            checkout.ScanBasket(new List<ProductItem>());
             // Act
             var result = checkout.CalculateTotalPrice();
 
@@ -72,7 +72,7 @@ namespace UnitTestsCore
         public void Should_CorrectlyCalculatePrice_When_ThereIsOneOfEachItem()
         {
             // Arrange
-            var priceSystemMock = new Mock<IPriceSystem>();
+            var priceSystemMock = new Mock<IDiscountCalculator>();
             priceSystemMock.Setup(x => x.CalculateTotalDiscount(
                 It.IsAny<int>(), It.IsAny<int>()
                 )).Returns(0);
@@ -85,7 +85,7 @@ namespace UnitTestsCore
 
             var items = new List<ProductItem> { item1, item2, item3 };
 
-            checkout.Scan(items);
+            checkout.ScanBasket(items);
 
             // Act
             var result = checkout.CalculateTotalPrice();
@@ -98,7 +98,7 @@ namespace UnitTestsCore
         public void Should_CorrectlyCalculatePrice_When_ThereAreMultipleOfEachItem()
         {
             // Arrange
-            var priceSystemMock = new Mock<IPriceSystem>();
+            var priceSystemMock = new Mock<IDiscountCalculator>();
             priceSystemMock.Setup(x => x.CalculateTotalDiscount(
                 It.IsAny<int>(), It.IsAny<int>()
                 )).Returns(0);
@@ -110,7 +110,7 @@ namespace UnitTestsCore
 
             var items = new List<ProductItem> { item1, item2, item1, item2 };
 
-            checkout.Scan(items);
+            checkout.ScanBasket(items);
 
             // Act
             var result = checkout.CalculateTotalPrice();
@@ -123,7 +123,7 @@ namespace UnitTestsCore
         public void Should_CorrectlyCalculatePrice_When_DiscountIsApplied()
         {
             // Arrange
-            var priceSystemMock = new Mock<IPriceSystem>();
+            var priceSystemMock = new Mock<IDiscountCalculator>();
             priceSystemMock.Setup(x => x.CalculateTotalDiscount(
                 It.IsAny<IEnumerable<ProductItem>>()
                 )).Returns(20);
@@ -147,7 +147,7 @@ namespace UnitTestsCore
         public void Should_CalculateCorrectTotalPriceWithoutDiscounts_When_ItemsScannedIncrementally()
         {
             // Arrange
-            var priceSystemMock = new Mock<IPriceSystem>();
+            var priceSystemMock = new Mock<IDiscountCalculator>();
             priceSystemMock.Setup(x => x.CalculateTotalDiscount(It.IsAny<IEnumerable<ProductItem>>()));
 
             var checkout = new Checkout(priceSystemMock.Object);
@@ -179,7 +179,7 @@ namespace UnitTestsCore
         public void Should_ApplyDiscount_When_DiscountApplicable()
         {
             // Arrange
-            var priceSystemMock = new Mock<IPriceSystem>();
+            var priceSystemMock = new Mock<IDiscountCalculator>();
             priceSystemMock.Setup(x => x.CalculateTotalDiscount(It.IsAny<IEnumerable<ProductItem>>()));
 
             var checkout = new Checkout(priceSystemMock.Object);
