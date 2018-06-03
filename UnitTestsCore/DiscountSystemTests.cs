@@ -7,7 +7,7 @@ using System.Text;
 namespace UnitTestsCore
 {
     [TestClass]
-    public class PriceSystemTests
+    public class DiscountSystemTests
     {
         private Dictionary<int, Func<int, int>> discountRules;
 
